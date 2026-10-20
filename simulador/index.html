@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Você Cairia Nessa? — Simulador de Segurança Digital</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#182235;--muted:#526078;--primary:#194b8f;--primary-hover:#12396d;--border:#d7dfeb;--good-bg:#e7f7ed;--good-text:#14532d;--warn-bg:#fff4dc;--warn-text:#713f12;--shadow:0 8px 24px rgba(24,34,53,.08);box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1420;--surface:#161e2e;--text:#e8edf6;--muted:#a3b0c6;--primary:#2f6fc7;--primary-hover:#3d7fd6;--border:#2b3850;--good-bg:#0f3a22;--good-text:#d6f5e1;--warn-bg:#4a3510;--warn-text:#ffe9bf;--shadow:none}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.6;font-size:18px}
+body.high-contrast{--bg:#000;--surface:#000;--text:#fff;--muted:#f0f0f0;--primary:#ffeb00;--primary-hover:#ffe000;--border:#fff;--good-bg:#003d1b;--good-text:#fff;--warn-bg:#4a2500;--warn-text:#fff;--shadow:none}
+body.high-contrast .brand-mark,body.high-contrast .primary-btn{color:#000}
+body.high-contrast .choice-btn{background:#000}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px}
+.header-inner{max-width:1040px;margin:auto;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center}
+.brand-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#dceafe;color:#194b8f;font-weight:800;font-size:22px}
+.brand-name{font-weight:800;line-height:1.2}.brand-sub{color:var(--muted);font-size:.85em}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.tool-btn,.secondary-btn{border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-height:44px;min-width:44px;background:var(--surface);color:var(--text);font-size:.9em;font-weight:700}
+.tool-btn:hover,.secondary-btn:hover{outline:2px solid var(--primary);outline-offset:1px}
+main{max-width:1040px;margin:28px auto 56px;padding:0 18px}
+.hero{background:linear-gradient(130deg,#163f78,#2476a8);color:#fff;padding:28px;border-radius:22px;box-shadow:var(--shadow);margin-bottom:20px}
+.hero-kicker{font-size:.85em;font-weight:800;opacity:.9}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.12;margin:8px 0 12px}
+.hero p{max-width:700px;margin:0;font-size:1.05em}.hero-note{margin-top:18px;font-size:.9em}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(230px,.8fr);gap:20px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.panel h2{font-size:1.3em;line-height:1.25;margin:0 0 12px}
+.muted{color:var(--muted)}
+.tag{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:4px 10px;font-size:.85em;font-weight:800;margin:0 5px 8px 0}
+.progress-top{display:flex;justify-content:space-between;gap:12px;font-size:.9em;font-weight:700;margin:0 0 8px}
+.progress-track{height:10px;background:var(--border);border-radius:999px;overflow:hidden;margin-bottom:20px}
+.progress-fill{height:100%;width:0;background:#2d8b57;transition:width .2s ease}
+.choice-list{display:grid;gap:10px;margin-top:12px}
+.choice-btn{text-align:left;padding:15px 16px;border:2px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font-weight:700}
+.choice-btn:hover{border-color:var(--primary)}
+.choice-btn:focus-visible,button:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+.feedback{border-radius:12px;padding:16px;margin-top:18px;border:1px solid var(--border)}
+.feedback.good{background:var(--good-bg);color:var(--good-text)}.feedback.warn{background:var(--warn-bg);color:var(--warn-text)}
+.feedback h3{margin:0 0 8px;font-size:1.15em}.feedback p{margin:7px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.primary-btn{border:0;border-radius:11px;padding:12px 17px;background:var(--primary);color:#fff;font-weight:800}
+.primary-btn:hover{background:var(--primary-hover)}
+.side-section+.side-section{margin-top:22px;padding-top:20px;border-top:1px solid var(--border)}
+.side-section h3{font-size:1em;margin:0 0 8px}
+.mini-list{padding-left:20px;margin:8px 0 0}.mini-list li{margin:6px 0}
+.question{border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}.question strong{display:block;margin-bottom:4px}
+.scenario-nav{display:grid;gap:8px}
+.nav-btn{display:flex;gap:10px;align-items:center;text-align:left;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text)}
+.nav-btn.active{border:2px solid var(--primary)}
+.nav-number{flex:0 0 30px;height:30px;display:grid;place-items:center;border-radius:9px;background:var(--bg);font-weight:800}
+.nav-label{font-size:.9em;font-weight:700}
+.small{font-size:.85em}
+footer{max-width:1040px;padding:0 18px 32px;margin:auto;color:var(--muted);font-size:.85em}
+.summary-list{display:grid;gap:10px;margin:16px 0}.summary-item{border:1px solid var(--border);padding:12px;border-radius:10px}
+.hidden{display:none!important}
+/* celular */
+.phone{width:min(100%,340px);margin:14px auto;border:9px solid #14171c;border-radius:38px;background:#14171c;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.25);font-family:Arial,Helvetica,sans-serif}
+.ph-top{display:flex;justify-content:space-between;padding:4px 18px 5px;font-size:11px;font-weight:700;color:#fff;line-height:1.4}
+.ph-head{display:flex;gap:10px;align-items:center;padding:9px 12px;color:#fff;background:#075e54}
+.sms .ph-head{background:#f3f3f5;color:#111}.call .ph-head{background:#1f2430}
+.av{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;background:#cfd8dc;font-size:20px}
+.ph-name{font-weight:700;font-size:15px;line-height:1.25}.ph-sub{font-size:11.5px;opacity:.8;line-height:1.3}
+.chat{height:390px;overflow-y:auto;padding:12px 10px;display:flex;flex-direction:column;gap:6px;background:#ece5dd;color:#111;font-size:14.5px;line-height:1.4}
+.sms .chat{background:#fff}.call .chat{background:#0f131b;color:#fff}
+.m{max-width:84%;padding:7px 10px 5px;border-radius:10px;background:#fff;color:#111;box-shadow:0 1px 1px rgba(0,0,0,.12);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-line}
+.m.me{align-self:flex-end;background:#d9fdd3}
+.sms .m{background:#e9e9eb;box-shadow:none;border-radius:18px}.sms .m.me{background:#0b84fe;color:#fff}
+.call .m{background:#262d3b;color:#fff;box-shadow:none}.call .m.me{background:#1d6f42}
+.m small{display:block;text-align:right;font-size:10px;opacity:.6;margin-top:2px}
+.sy{align-self:center;text-align:center;font-size:12.5px;background:#fff3c4;color:#4a3b00;padding:7px 10px;border-radius:8px;max-width:94%}
+.sy.notif{background:#dbe7ff;color:#12325f}.sy.good{background:#d6f5e1;color:#14532d}.sy.bad{background:#ffd9d4;color:#5c1008}
+.file{display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.07);border-radius:8px;padding:8px;margin-bottom:3px;font-size:13px}
+.typ i{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:#888;animation:b 1s infinite}
+.typ i:nth-child(2){animation-delay:.15s}.typ i:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{opacity:.25}}
+.fl.lk{color:#0b6bcb;text-decoration:underline}
+.sms .me .fl.lk{color:#fff}
+.chat.rev .fl{background:#ffd54a;color:#111;border-radius:4px;padding:0 2px;box-shadow:0 0 0 1px #b8860b;text-decoration:none}
+.fake{font-size:.85em;color:var(--muted);text-align:center;margin-top:4px}
+@media (max-width:760px){.layout{grid-template-columns:1fr}.hero{padding:16px}.hero p{display:none}.hero h1{margin:4px 0}.panel{padding:16px}.header-inner{align-items:flex-start}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+  <div class="brand" aria-label="Você Cairia Nessa?"><div class="brand-mark" aria-hidden="true">?</div><div><div class="brand-name">Você Cairia Nessa?</div><div class="brand-sub">Simulador de segurança digital</div></div></div>
+  <div class="tools" aria-label="Opções de acessibilidade">
+    <button class="tool-btn" id="decreaseText" type="button" aria-label="Diminuir tamanho do texto">A−</button>
+    <button class="tool-btn" id="increaseText" type="button" aria-label="Aumentar tamanho do texto">A+</button>
+    <button class="tool-btn" id="contrastToggle" type="button" aria-pressed="false">Alto contraste</button>
+  </div>
+</div></header>
+
+<main>
+  <section class="hero">
+    <div class="hero-kicker">Produto Desenvolvido — Versão Funcional</div>
+    <h1>Você cairia nessa?</h1>
+    <p>Experimente situações reais de golpes exatamente como chegam no celular. Analise a mensagem, escolha sua atitude e veja os sinais de alerta explicados na prática.</p>
+    <div class="hero-note">Ferramenta interativa de conscientização em segurança digital.</div>
+  </section>
+
+  <div class="layout" id="layout">
+    <section class="panel">
+      <div class="progress-top"><span id="progressLabel">Situação 1 de 6</span><span id="scoreLabel">Escolhas seguras: 0</span></div>
+      <div class="progress-track" role="progressbar" aria-label="Progresso das situações" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+
+      <div id="scenarioView">
+        <div id="scenarioTags"></div>
+        <h2 id="scenarioTitle"></h2>
+        <p id="scenarioIntro" class="muted"></p>
+        <div class="phone wa" id="phone" aria-label="Celular com a conversa recebida">
+          <div class="ph-top" aria-hidden="true"><span>9:41</span><span>5G ▂▄▆ 🔋</span></div>
+          <div class="ph-head"><div class="av" id="phAv" aria-hidden="true"></div><div><div class="ph-name" id="phName"></div><div class="ph-sub" id="phSub"></div></div></div>
+          <div class="chat" id="chat" role="log" aria-live="polite" aria-label="Conversa"></div>
+        </div>
+        <div class="fake">Simulação interativa baseada em incidentes reais.</div>
+        <div id="decide" class="hidden">
+          <p><strong>O que você faria?</strong></p>
+          <div class="choice-list" id="choices"></div>
+        </div>
+        <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
+        <div class="actions">
+          <button class="primary-btn hidden" id="nextBtn" type="button">Próxima situação →</button>
+          <button class="secondary-btn" id="restartBtn" type="button">Recomeçar</button>
+        </div>
+      </div>
+
+      <div id="resultView" class="hidden">
+        <h2>Simulação Concluída com Sucesso!</h2>
+        <p id="resultMessage"></p>
+        <div class="summary-list" id="resultSummary"></div>
+        <h3>Três perguntas essenciais antes de agir</h3>
+        <div class="question"><strong>1. É realmente quem diz ser?</strong>Confirme por outro canal conhecido, principalmente quando houver pedido inesperado.</div>
+        <div class="question"><strong>2. Estão pedindo dinheiro, códigos ou dados pessoais?</strong>Não compartilhe códigos de verificação nem informações sensíveis.</div>
+        <div class="question"><strong>3. Estão pressionando você a agir rápido?</strong>Pare, respire e confira antes de clicar, pagar ou responder.</div>
+        <div class="actions"><button class="primary-btn" id="playAgainBtn" type="button">Jogar novamente</button></div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="side-section">
+        <h2>Trilha de Cenários</h2>
+        <p class="muted small">Selecione uma situação abaixo para testar diretamente. Após a escolha, os sinais de alerta aparecem destacados na conversa.</p>
+        <nav class="scenario-nav" id="scenarioNav" aria-label="Escolher situação"></nav>
+      </div>
+      <div class="side-section">
+        <h3>Fique atento a estes sinais</h3>
+        <ul class="mini-list"><li>Urgência ou ameaça para decidir rápido.</li><li>Pedido inesperado de dinheiro ou código.</li><li>Link estranho ou remetente desconhecido.</li><li>Oferta boa demais ou pedido de segredo.</li></ul>
+      </div>
+      <div class="side-section">
+        <h3>O que fazer se cair em um golpe?</h3>
+        <p class="small">Interrompa o contato imediatamente, não envie mais valores, comunique seu banco pelos canais oficiais para contestação (como o MED no Pix), altere senhas e registre um boletim de ocorrência.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <strong>Projeto Integrador III — PI-III</strong><br>
+  <strong>Produto:</strong> Você Cairia Nessa? — Simulador de Segurança Digital (Versão Funcional)<br>
+  <strong>Integrantes:</strong> Wislainy Fontes dos Santos • Tawany Fontes dos Santos • João Victor Lacerda Ribeiro<br>
+  Desenvolvido para fins educativos e práticos na FAMA.
+</footer>
+
+<script>
+const S = [
+{
+  title:"Familiar com número novo", tags:["Fraudes digitais","Engenharia social"],
+  intro:"Você está no trabalho quando chega uma mensagem de um número desconhecido com a foto de perfil de um familiar.",
+  app:"wa", av:"🧑", name:"+55 11 91234-5678", sub:"online", at:[14,32],
+  msgs:[
+    {s:"Este número não está na sua lista de contatos."},
+    {x:"Oi mãe!"},
+    {x:"Esse é meu número novo 😅 {{meu celular caiu na água}} e perdi tudo, até os contatos"},
+    {x:"Tô falando pelo chip novo. {{O app do banco tá bloqueado}} e eu não consigo acessar nada"},
+    {x:"Mãe, tenho um boleto que vence hoje. {{Faz um Pix pra mim?}} Depois te devolvo. {{Te explico tudo depois, é urgente!}} 🙏"}
+  ],
+  choices:[
+    {t:"Fazer o Pix, porque parece ser alguém conhecido.", ok:false, ti:"Pare e confirme primeiro", ex:"Golpistas copiam a foto de perfil e usam urgência para impedir a checagem.", ac:"Ligue para o número que você já conhecia ou confirme pessoalmente com a pessoa/família.", me:"Tá bom, filho! Qual a chave Pix?", re:["Valeu!! Já paguei o boleto 🙏 {{Só mais um favor: manda mais R$ 500 pra outra conta?}}"], sy:"⚠ Você transferiu dinheiro para um golpista e ele já está pedindo mais."},
+    {t:"Confirmar por uma ligação ou outro contato conhecido.", ok:true, ti:"Boa escolha!", ex:"Confirmar por um canal independente ajuda a verificar a identidade da pessoa.", ac:"Antes de transferir, converse com o familiar pelo número antigo.", me:"Vou te ligar rapidinho no seu número de sempre.", re:["{{Não liga não, tô sem sinal! Só dá por aqui}}"], sy:"✔ Você ligou para o número antigo: seu filho atendeu, estava em casa e o celular estava normal. Era golpe."},
+    {t:"Pedir dados pessoais para testar se a pessoa sabe.", ok:false, ti:"Isso não é suficiente", ex:"Dados pessoais podem ser obtidos em vazamentos ou redes sociais.", ac:"Prefira ligar para um contato conhecido.", me:"Qual o nome da nossa cachorrinha?", re:["Mãe, sério?? 😤 {{Não tenho tempo pra isso, o boleto vence hoje!}}"], sy:"⚠ O golpista contornou a pergunta e manteve a pressão."}
+  ],
+  signs:["Número novo dizendo ser da família","Pedido de dinheiro por Pix","Urgência: “depois explico”"],
+  help:"Se já pagou: app do banco (contestar o Pix) e boletim de ocorrência.", src:"CERT.br, Golpes: Não se Deixe Enganar (2026)"
+},
+{
+  title:"Mensagem falsa de bloqueio bancário", tags:["Fraudes digitais","Links suspeitos"],
+  intro:"De madrugada, seu celular vibra com um SMS urgente alertando sobre acesso suspeito.",
+  app:"sms", av:"🏦", name:"BANCO-ALERTA", sub:"SMS · hoje", at:[2,15],
+  msgs:[
+    {x:"[BANCO] ALERTA: {{acesso suspeito}} detectado na sua conta às 02:14."},
+    {x:"Sua conta será {{BLOQUEADA ainda hoje}}. Para evitar, regularize: {{http://banco-seguranca-app.top/regularizar}}"},
+    {x:"Equipe de Segurança. Atendimento 24h."}
+  ],
+  choices:[
+    {t:"Abrir o link e digitar meus dados para evitar o bloqueio.", ok:false, ti:"Cuidado com links recebidos", ex:"Mensagens falsas imitam bancos para roubar senhas e dados.", ac:"Não clique. Abra o aplicativo oficial por conta própria.", me:"(Você abre o link e preenche CPF e senha)", re:[""], sy:"⚠ A página era falsa. O golpista obteve seus dados de acesso."},
+    {t:"Ignorar o link e verificar pelo aplicativo oficial.", ok:true, ti:"Boa escolha!", ex:"Usar o app ou site oficial reduz o risco de phishing.", ac:"Não informe senhas em links de SMS.", me:"(Você ignora o SMS e abre o aplicativo oficial do banco)", re:[], sy:"✔ No app oficial não há nenhum alerta. Você apagou e denunciou a mensagem."},
+    {t:"Encaminhar o link para amigos para tirar dúvida.", ok:false, ti:"Melhor não espalhar o link", ex:"Encaminhar pode expor outras pessoas ao risco.", ac:"Verifique diretamente com o banco por um canal oficial.", me:"Gente, vcs receberam isso? 😬 {{http://banco-seguranca-app.top/regularizar}}", re:["Amiga: Recebi também!! Vou clicar pra ver"], sy:"⚠ Receber a mesma mensagem não prova que ela é verdadeira."}
+  ],
+  signs:["Alerta de bloqueio com urgência","Link enviado por SMS","Endereço de site estranho"],
+  help:"Canais oficiais do seu banco: aplicativo e telefone do cartão.", src:"Ministério das Comunicações, Ataque Phishing (2026)"
+},
+{
+  title:"Comprovante falso com arquivo APK", tags:["Malware","Segurança do dispositivo"],
+  intro:"Um número desconhecido escreve educadamente dizendo que fez um Pix errado e envia um comprovante.",
+  app:"wa", av:"👤", name:"+55 21 98877-6655", sub:"online", at:[15,8],
+  msgs:[
+    {s:"Este número não está na sua lista de contatos."},
+    {x:"Boa tarde! Desculpa incomodar 🙏"},
+    {x:"Fiz um Pix de R$ 1.850 na sua conta {{por engano}}. Era do aluguel."},
+    {f:"Comprovante_Pix_1850{{.pdf.apk}}", sz:"2,1 MB"},
+    {x:"{{Preciso que devolva hoje.}} Abre o comprovante e {{confirma agora}} que viu!"}
+  ],
+  choices:[
+    {t:"Abrir o arquivo para conferir o comprovante.", ok:false, ti:"Não abra sem verificar", ex:"Arquivos com extensão .apk ou desconhecidos instalam malwares.", ac:"Confirme com o remetente por um canal confiável.", me:"(Você toca no arquivo para abrir)", re:[], sy:"⚠ O arquivo instalou um aplicativo malicioso no seu aparelho."},
+    {t:"Não abrir e conferir o extrato no app do banco.", ok:true, ti:"Boa escolha!", ex:"Desconfiar de anexos protege contra programas nocivos.", ac:"Sempre valide movimentações diretamente no app oficial.", me:"(Você confere o extrato e vê que nenhum valor entrou)", re:[], sy:"✔ O extrato estava zerado. Era golpe para instalar vírus. Você bloqueou o número."},
+    {t:"Baixar o arquivo e mandar para outra pessoa ver.", ok:false, ti:"Encaminhar não torna seguro", ex:"O arquivo continua malicioso em qualquer aparelho.", ac:"Evite baixar e compartilhar anexos suspeitos.", me:"Amiga, abre esse arquivo aí pra mim?", re:[], sy:"⚠ Você colocou o celular de outra pessoa em risco."}
+  ],
+  signs:["Remetente desconhecido","Arquivo executável suspeito (.apk)","Pressão para abrir rápido"],
+  help:"Se abriu: rode o antivírus, verifique permissões e troque senhas.", src:"CERT.br, Códigos Maliciosos (2023)"
+},
+{
+  title:"Ligação da falsa central de segurança", tags:["Proteção de contas","Dados pessoais"],
+  intro:"Seu celular toca. O identificador mostra um número parecido com o do seu banco.",
+  app:"call", av:"☎️", name:"Central de Segurança", sub:"Banco · (11) 4004-0000 · 00:47", at:[10,41],
+  msgs:[
+    {x:"Bom dia! Falo da {{central de segurança do seu banco}}. Matrícula 48213."},
+    {x:"Identificamos {{compras suspeitas}} no seu cartão. Foi o senhor(a)?"},
+    {x:"Para cancelar, vou {{enviar um código por SMS}}. Quando chegar, {{me informe os seis dígitos}}."},
+    {s:"SMS · Seu código de verificação é 482 913. Não compartilhe com ninguém.", n:1},
+    {x:"Chegou? {{Rápido, senão a compra será efetivada!}}"}
+  ],
+  choices:[
+    {t:"Passar o código SMS para o atendente cancelar a compra.", ok:false, ti:"Nunca compartilhe o código", ex:"O código recebido por SMS autoriza o acesso ou cadastro da sua conta em outro aparelho.", ac:"Jamais informe códigos de verificação a terceiros.", me:"É 482 913.", re:["Perfeito! {{Já cancelamos a compra.}}"], sy:"⚠ Com o código, o golpista assumiu o controle da sua conta."},
+    {t:"Não compartilhar, desligar e ligar para o número oficial do cartão.", ok:true, ti:"Boa escolha!", ex:"Bancos nunca solicitam códigos de verificação por telefone.", ac:"Encerre a chamada e use os canais oficiais do banco.", me:"Vou desligar e ligar para o verso do meu cartão.", re:[], sy:"✔ A central verdadeira confirmou que não havia nenhuma compra indevida."},
+    {t:"Enviar apenas os primeiros números do código.", ok:false, ti:"Não compartilhe nenhuma parte", ex:"Informações parciais também ajudam criminosos.", ac:"Não forneça nenhuma parte de códigos ou senhas.", me:"Os três primeiros são 482…", re:["{{Preciso dos seis para cancelar!}}"], sy:"⚠ O golpista insistiu pois qualquer dígito facilita a fraude."}
+  ],
+  signs:["Pedido de código de verificação por telefone","Falsa central de atendimento","Urgência extrema"],
+  help:"Suporte oficial, pelo aplicativo ou site do banco.", src:"CERT.br, Autenticação (2022)"
+},
+{
+  title:"Pedido de dinheiro de contato da internet", tags:["IA e conteúdo falso","Fraudes digitais"],
+  intro:"Você conversa há semanas com alguém que conheceu na rede. Hoje, chegam mensagens de pedido urgente.",
+  app:"wa", av:"👨", name:"Carlos Mendes ❤️", sub:"online", at:[8,12],
+  msgs:[
+    {i:"Foto"},
+    {x:"Bom dia, minha querida ☀️ Dormiu bem?"},
+    {a:"0:14"},
+    {x:"Comprei a passagem para te ver, mas {{meu cartão bloqueou}} na hora de pagar a bagagem 😩"},
+    {x:"{{Pode me mandar R$ 2.500 por Pix?}} Te devolvo logo. {{Não conta pra ninguém ainda}}, surpresa 🥰"}
+  ],
+  choices:[
+    {t:"Enviar o dinheiro para ajudar quem você conhece na internet.", ok:false, ti:"Confiança construída engana", ex:"Criminosos criam perfis falsos e usam IA para gerar conexão antes de pedir dinheiro.", ac:"Nunca envie valores a pessoas que você nunca viu pessoalmente.", me:"Claro, amor. Qual a chave Pix?", re:["Obrigado!! ❤️ {{Surgiu uma taxa extra de R$ 900.}}"], sy:"⚠ Após o primeiro envio, novos pedidos continuam surgindo."},
+    {t:"Recusar o Pix, pedir videochamada ao vivo e conversar com a família.", ok:true, ti:"Boa escolha!", ex:"Fotos e áudios podem ser gerados por inteligência artificial. A recusa em ligar ao vivo é sinal claro de golpe.", ac:"Desconfie de pedidos financeiros e exija confirmação real.", me:"Vamos fazer videochamada agora? Vou falar com minha família.", re:["{{Agora não dá, tô sem câmera.}} Você não confia em mim? 😢"], sy:"✔ Recusar vídeo e pedir segredo confirmam a suspeita de golpe."},
+    {t:"Pedir outra foto ou vídeo antes de decidir.", ok:false, ti:"Ainda pode ser falso", ex:"Mídias adicionais enviadas pelo mesmo chat não garantem autenticidade.", ac:"Busque sempre meios independentes de verificação.", me:"Manda uma foto segurando um papel com a data de hoje?", re:["(Ele envia uma foto gerada por IA) Satisfeita?"], sy:"⚠ Ferramentas de IA criam imagens sob demanda facilmente hoje em dia."}
+  ],
+  signs:["Relacionamento rápido online","Pedido de dinheiro com urgência","Exigência de segredo"],
+  help:"Denuncie o perfil na plataforma e procure suporte se houver prejuízo financeiro.", src:"CERT.br, Golpes e Inteligência Artificial (2026)"
+},
+{
+  title:"Falsa central de recuperação de golpe", tags:["Reação e orientação","Prevenção"],
+  intro:"Após relatar um incidente recente, você recebe mensagem de uma suposta central oficial de ajuda.",
+  app:"wa", av:"🛡️", name:"Central de Recuperação ✔", sub:"conta comercial", at:[19,3],
+  msgs:[
+    {s:"Este número não está na sua lista de contatos."},
+    {x:"Olá! Somos da {{Central Nacional de Recuperação de Valores}}. Vimos sua denúncia."},
+    {x:"Conseguimos {{recuperar 100% do seu dinheiro}}, mas há uma {{taxa de liberação de R$ 480}}."},
+    {x:"Pague agora por Pix e envie {{seus dados bancários}}. {{Oferta válida só hoje}} ⏰"}
+  ],
+  choices:[
+    {t:"Pagar a taxa para reaver o dinheiro perdido.", ok:false, ti:"Não envie mais valores", ex:"Cobrar taxas para devolver dinheiro recuperado é um golpe clássico de recompra/recuperação.", ac:"Interrompa o contato imediatamente.", me:"Vou mandar o Pix da taxa agora.", re:["Quase pronto! {{Só falta você enviar a senha do app}}."], sy:"⚠ Era um novo golpe aplicado sobre a mesma vítima."},
+    {t:"Bloquear o contato, guardar as provas e acionar o banco oficial.", ok:true, ti:"Boa escolha!", ex:"Central de recuperação cobrando taxa é fraude. Apenas bancos oficiais e autoridades lidam com contestações.", ac:"Preserve capturas de tela e registre BO.", me:"(Você bloqueia o número e aciona a ouvidoria do seu banco oficial)", re:[], sy:"✔ Você evitou cair em uma segunda fraude consecutiva."},
+    {t:"Apagar a conversa e ignorar.", ok:false, ti:"Guarde as evidências", ex:"Registrar e preservar provas é essencial para investigações.", ac:"Não apague dados importantes de incidentes.", me:"(Você apaga tudo sem salvar)", re:[], sy:"⚠ Apagar provas dificulta ações legais e registros de segurança."}
+  ],
+  signs:["Cobrança de taxa para reaver dinheiro","Urgência e pressão","Pedido de dados confidenciais"],
+  help:"App do banco, delegacia (BO online), Procon e Banco Central.", src:"CERT.br, Golpes: Caiu? Veja o que Fazer (2026)"
+}
+];
+
+const $ = id => document.getElementById(id);
+const clean = s => s.replace(/\{\{|\}\}/g, "");
+const mt = m => clean(m.x || m.f || m.s || (m.a ? "🎤 Áudio " + m.a : m.i ? "🖼️ " + m.i : ""));
+const slow = () => !matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+let orders = [], current = 0, answered = {}, textSize = 18, run = 0;
+const newOrders = () => { orders = S.map(sc => shuffle(sc.choices.map((_, i) => i))); };
+const tm = (sc, i) => String(sc.at[0]).padStart(2, "0") + ":" + String((sc.at[1] + Math.floor(i / 2)) % 60).padStart(2, "0");
+const line = (label, text) => { const p = document.createElement("p"); const b = document.createElement("strong"); b.textContent = label; p.append(b, document.createTextNode(text)); return p; };
+
+function fill(el, t) {
+  t.split(/(\{\{.*?\}\})/).forEach(p => {
+    if (p.startsWith("{{")) { const q = p.slice(2, -2), s = document.createElement("span"); s.className = "fl" + (q.startsWith("http") ? " lk" : ""); s.textContent = q; el.append(s); }
+    else if (p) el.append(document.createTextNode(p));
+  });
+}
+function bub(m, kind, time) {
+  const d = document.createElement("div");
+  if (m.s) { d.className = "sy" + (m.n ? " notif" : "") + (m.g === 1 ? " good" : m.g === 0 ? " bad" : ""); fill(d, m.s); return d; }
+  d.className = "m" + (kind === "me" ? " me" : "");
+  if (m.f) { const f = document.createElement("div"); f.className = "file"; f.append("📄 "); const s = document.createElement("span"); fill(s, m.f); f.append(s, " · " + m.sz); d.append(f); }
+  if (m.a) d.append("🎤 ▶ ▁▃▅▂▆▃▁▄ " + m.a);
+  if (m.i) d.append("🖼️ " + m.i + " (imagem)");
+  if (m.x) { const s = document.createElement("span"); fill(s, m.x); d.append(s); }
+  const sm = document.createElement("small"); sm.textContent = time; d.append(sm);
+  return d;
+}
+async function play(list, chat, my, start, sc) {
+  for (let i = 0; i < list.length; i++) {
+    const m = list[i];
+    if (slow()) {
+      let t = null;
+      if (!m.s) { t = document.createElement("div"); t.className = "m typ"; t.setAttribute("aria-hidden", "true"); t.innerHTML = "<i></i><i></i><i></i>"; chat.append(t); chat.scrollTop = 1e5; }
+      await sleep(m.s ? 600 : 650 + Math.min(900, (m.x || "").length * 11));
+      if (my !== run) return false;
+      if (t) t.remove();
+    }
+    chat.append(bub(m, "in", tm(sc, start + i)));
+    chat.scrollTop = 1e5;
+  }
+  return true;
+}
+async function outcome(sc, c, my, instant) {
+  const chat = $("chat"), n = sc.msgs.length;
+  chat.append(c.me.startsWith("(") ? bub({ s: c.me }, "me") : bub({ x: c.me }, "me", tm(sc, n)));
+  chat.scrollTop = 1e5;
+  const list = (c.re || []).map(x => ({ x }));
+  list.push({ s: sc.sy, g: c.ok ? 1 : 0 });
+  if (instant) { list.forEach((m, i) => chat.append(bub(m, "in", tm(sc, n + 1 + i)))); chat.scrollTop = 1e5; return true; }
+  return play(list, chat, my, n + 1, sc);
+}
+
+function renderNav() {
+  const nav = $("scenarioNav"); nav.innerHTML = "";
+  S.forEach((sc, index) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "nav-btn" + (index === current ? " active" : "");
+    b.setAttribute("aria-current", index === current ? "step" : "false");
+    const n = document.createElement("span"); n.className = "nav-number"; n.textContent = answered[index] ? "✓" : String(index + 1);
+    const l = document.createElement("span"); l.className = "nav-label"; l.textContent = sc.title;
+    b.append(n, l); b.addEventListener("click", () => showScenario(index)); nav.appendChild(b);
+  });
+}
+function updateProgress() {
+  const done = Object.keys(answered).length;
+  $("progressLabel").textContent = `Situação ${current + 1} de ${S.length}`;
+  $("scoreLabel").textContent = `Escolhas seguras: ${Object.values(answered).filter(a => a.ok).length}`;
+  $("progressFill").style.width = `${(done / S.length) * 100}%`;
+  $("progressBar").setAttribute("aria-valuenow", done);
+}
+function showScenario(index) {
+  current = index; const my = ++run, sc = S[index], ans = answered[index];
+  $("scenarioView").classList.remove("hidden"); $("resultView").classList.add("hidden");
+  $("scenarioTitle").textContent = sc.title; $("scenarioIntro").textContent = sc.intro;
+  $("scenarioTags").innerHTML = "";
+  sc.tags.forEach(t => { const s = document.createElement("span"); s.className = "tag"; s.textContent = t; $("scenarioTags").appendChild(s); });
+  $("phone").className = "phone " + sc.app;
+  $("phAv").textContent = sc.av; $("phName").textContent = sc.name; $("phSub").textContent = sc.sub;
+  const chat = $("chat"); chat.innerHTML = ""; chat.classList.remove("rev");
+  const fb = $("feedback"); fb.className = "feedback hidden"; fb.innerHTML = "";
+  $("decide").classList.add("hidden"); $("nextBtn").classList.add("hidden");
+  $("nextBtn").textContent = index === S.length - 1 ? "Ver meu resultado →" : "Próxima situação →";
+  const box = $("choices"); box.innerHTML = "";
+  if (ans) {
+    sc.msgs.forEach((m, i) => chat.append(bub(m, "in", tm(sc, i))));
+    outcome(sc, sc.choices[ans.ci], my, true);
+    chat.classList.add("rev"); showFeedback(ans.ci, false); $("nextBtn").classList.remove("hidden");
+  } else {
+    orders[index].forEach((idx, pos) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "choice-btn";
+      b.textContent = `${String.fromCharCode(65 + pos)}. ${sc.choices[idx].t}`;
+      b.addEventListener("click", () => answerScenario(idx)); box.appendChild(b);
+    });
+    play(sc.msgs, chat, my, 0, sc).then(ok => { if (ok && my === run) { $("decide").classList.remove("hidden"); } });
+  }
+  updateProgress(); renderNav();
+}
+function showFeedback(ci, scroll = true) {
+  const sc = S[current], c = sc.choices[ci], fb = $("feedback");
+  fb.className = "feedback " + (c.ok ? "good" : "warn"); fb.innerHTML = "";
+  const h = document.createElement("h3"); h.textContent = c.ti;
+  const p1 = document.createElement("p"); p1.textContent = c.ex;
+  const src = document.createElement("p"); src.className = "small"; src.textContent = "Fonte: " + sc.src;
+  fb.append(h, p1, line("O que fazer: ", c.ac), line("Sinais de alerta: ", sc.signs.join("; ") + "."), line("Na conversa: ", "os trechos em amarelo mostram onde estavam os sinais."), line("Onde buscar ajuda: ", sc.help), src);
+  if (scroll) fb.scrollIntoView({ behavior: slow() ? "smooth" : "auto", block: "nearest" });
+}
+async function answerScenario(ci) {
+  if (answered[current]) return;
+  const sc = S[current], c = sc.choices[ci], my = run;
+  answered[current] = { ok: c.ok, ci };
+  $("decide").classList.add("hidden"); updateProgress(); renderNav();
+  const ok = await outcome(sc, c, my, false);
+  if (!ok || my !== run) return;
+  $("chat").classList.add("rev"); showFeedback(ci); $("nextBtn").classList.remove("hidden");
+}
+function showResults() {
+  run++;
+  $("scenarioView").classList.add("hidden"); $("resultView").classList.remove("hidden");
+  const n = Object.values(answered).filter(a => a.ok).length;
+  $("resultMessage").textContent = `Você escolheu a opção mais segura em ${n} de ${S.length} situações. Use o resultado como oportunidade de aprendizagem: reconhecer sinais e confirmar informações são habilidades que melhoram com a prática.`;
+  $("resultSummary").innerHTML = "";
+  S.forEach((sc, i) => {
+    const r = answered[i], it = document.createElement("div"); it.className = "summary-item";
+    const s = document.createElement("strong"); s.textContent = `${i + 1}. ${sc.title}`;
+    const p = document.createElement("p"); p.className = "small";
+    p.textContent = r ? (r.ok ? "Resposta segura escolhida." : "Revise a orientação desta situação.") : "Situação ainda não respondida.";
+    it.append(s, p); $("resultSummary").appendChild(it);
+  });
+  renderNav();
+}
+function restart() { newOrders(); current = 0; answered = {}; showScenario(0); }
+$("nextBtn").addEventListener("click", () => { if (!answered[current]) return; current < S.length - 1 ? showScenario(current + 1) : showResults(); });
+$("restartBtn").addEventListener("click", restart);
+$("playAgainBtn").addEventListener("click", restart);
+$("increaseText").addEventListener("click", () => { textSize = Math.min(26, textSize + 2); document.body.style.fontSize = textSize + "px"; });
+$("decreaseText").addEventListener("click", () => { textSize = Math.max(16, textSize - 2); document.body.style.fontSize = textSize + "px"; });
+$("contrastToggle").addEventListener("click", () => { const e = document.body.classList.toggle("high-contrast"); $("contrastToggle").setAttribute("aria-pressed", String(e)); });
+
+newOrders();
+showScenario(0);
+</script>
+</body>
+</html>
